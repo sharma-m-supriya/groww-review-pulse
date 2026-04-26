@@ -1,11 +1,100 @@
 import streamlit as st
 import pandas as pd
 
-# ---------------- PAGE ---------------- #
-st.set_page_config(page_title="Groww Review Pulse", layout="centered")
+# ---------------- PAGE CONFIG ---------------- #
+st.set_page_config(page_title="Weekly Review Pulse", layout="centered")
 
-st.title("📊 Weekly Review Pulse — Groww")
-st.write("Understand what users are saying in the last few weeks")
+# ---------------- UI STYLING ---------------- #
+st.markdown("""
+<style>
+
+/* Background */
+body {
+    background-color: #F7F9FB;
+}
+
+/* Container width */
+.block-container {
+    padding-top: 2rem;
+    max-width: 1100px;
+}
+
+/* Title */
+.title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1F2937;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Section title */
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #374151;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+/* Card */
+.card {
+    background: #FFFFFF;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #E5E7EB;
+    text-align: center;
+}
+
+/* Card value */
+.card-value {
+    font-size: 24px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Card label */
+.card-label {
+    font-size: 14px;
+    color: #6B7280;
+}
+
+/* Quote */
+.quote {
+    background: #FFFFFF;
+    padding: 16px;
+    border-radius: 10px;
+    border-left: 4px solid #00D09C;
+    margin-bottom: 10px;
+    color: #374151;
+}
+
+/* Action */
+.action {
+    background: #ECFDF5;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid #D1FAE5;
+    margin-bottom: 10px;
+    color: #065F46;
+}
+
+/* Email */
+.email {
+    background: #111827;
+    color: #F9FAFB;
+    padding: 18px;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 13px;
+    white-space: pre-wrap;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ---------------- HEADER ---------------- #
+st.markdown('<div class="title">Weekly Review Pulse</div>', unsafe_allow_html=True)
 
 # ---------------- LOAD DATA ---------------- #
 df = pd.read_csv("reviews.csv")
@@ -38,49 +127,72 @@ for theme in top_themes.index:
     sample = df[df["theme"] == theme]["review"].iloc[0]
     quotes.append(sample)
 
-# ---------------- ACTION IDEAS ---------------- #
+# ---------------- ACTIONS ---------------- #
 actions = [
-    "Improve app stability and fix crashes during login and usage",
-    "Simplify KYC process and reduce verification failures",
-    "Fix payment and withdrawal delays to improve reliability"
+    "Improve application stability and reduce crashes during login and usage",
+    "Streamline KYC verification and reduce rejection rates",
+    "Improve reliability of payments and withdrawals"
 ]
 
-# ---------------- DISPLAY ---------------- #
-st.subheader("🔥 Top Themes")
-for i, theme in enumerate(top_themes.index, 1):
-    st.write(f"{i}. {theme}")
-
-st.subheader("💬 User Quotes")
-for q in quotes:
-    st.write(f"- {q}")
-
-st.subheader("🚀 Action Ideas")
-for a in actions:
-    st.write(f"- {a}")
-
-# ---------------- EMAIL ---------------- #
-email = f"""
-Subject: Weekly Review Pulse - Groww
-
-Hi,
-
-Here is this week’s summary:
+# ---------------- WEEKLY NOTE ---------------- #
+note = f"""
+Weekly Review Pulse
 
 Top Themes:
-{top_themes.to_string()}
+1. {top_themes.index[0]}
+2. {top_themes.index[1]}
+3. {top_themes.index[2]}
 
-User Quotes:
+User Feedback:
 - {quotes[0]}
 - {quotes[1]}
 - {quotes[2]}
 
-Action Ideas:
+Recommended Actions:
 - {actions[0]}
 - {actions[1]}
 - {actions[2]}
+"""
+
+# ---------------- EMAIL ---------------- #
+email = f"""Subject: Weekly Review Pulse
+
+Hi,
+
+Here is this week's summary:
+
+{note}
+
+This is based on recent app store reviews.
 
 Thanks
 """
 
-st.subheader("📧 Email Draft")
-st.code(email)
+# ---------------- DISPLAY ---------------- #
+
+# Top Themes
+st.markdown('<div class="section-title">Top Themes</div>', unsafe_allow_html=True)
+cols = st.columns(3)
+
+for i, theme in enumerate(top_themes.index):
+    with cols[i]:
+        st.markdown(f"""
+        <div class="card">
+            <div class="card-value">{top_themes[theme]}</div>
+            <div class="card-label">{theme}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# Quotes
+st.markdown('<div class="section-title">User Feedback</div>', unsafe_allow_html=True)
+for q in quotes:
+    st.markdown(f'<div class="quote">"{q}"</div>', unsafe_allow_html=True)
+
+# Actions
+st.markdown('<div class="section-title">Recommended Actions</div>', unsafe_allow_html=True)
+for a in actions:
+    st.markdown(f'<div class="action">{a}</div>', unsafe_allow_html=True)
+
+# Email
+st.markdown('<div class="section-title">Email Draft</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="email">{email}</div>', unsafe_allow_html=True)
